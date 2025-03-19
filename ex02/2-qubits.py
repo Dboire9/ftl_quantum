@@ -1,5 +1,7 @@
-from qiskit_aer.primitives import Sampler
-from qiskit import QuantumCircuit
+from qiskit.visualization import plot_histogram
+import matplotlib.pyplot as plt
+from qiskit import QuantumCircuit, transpile, transpile
+from qiskit_aer import Aer
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
 
@@ -10,9 +12,11 @@ qc.cx(0, 1)
 qc.measure_all()
 print(qc)
 
-sampler = Sampler()
-quasi_dists = sampler.run(qc, shots=500).result().quasi_dists[0]
-
-print(quasi_dists)
-plot_histogram(quasi_dists)
+backend = Aer.get_backend('qasm_simulator')
+new_circuit = transpile(qc, backend)
+job = backend.run(new_circuit, shots=500)
+result = job.result()
+counts = result.get_counts()
+print(counts)
+plot_histogram(counts)
 plt.show()
