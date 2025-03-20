@@ -1,12 +1,9 @@
-from qiskit import QuantumCircuit, transpile, transpile, QuantumRegister
-from qiskit_aer import Aer, AerSimulator
-from qiskit.visualization import plot_histogram
+from qiskit import QuantumCircuit, transpile, QuantumRegister
+from qiskit_aer import Aer
 import matplotlib.pyplot as plt
-import os
-import numpy as np
 
 def main():
-	qc = dj_query(4)
+	qc = dj_query(3)
 	print(dj_algo(qc))
 	plt.show()
 
@@ -24,7 +21,7 @@ def dj_algo(function: QuantumCircuit):
 	qc = dj_circuit(function)
 	backend = Aer.get_backend('qasm_simulator')
 	new_circuit = transpile(qc, backend)
-	job = backend.run(new_circuit, shots=10, memory=True)
+	job = backend.run(new_circuit, shots=1, memory=True)
 	result = job.result()
 	measurements = result.get_memory()
 	print(measurements)
@@ -48,7 +45,7 @@ def constant_oracle(n: int) -> QuantumCircuit:
 	return qc
 
 def dj_query(n: int) -> QuantumCircuit:
-	oracle_circuit = constant_oracle(n)
+	oracle_circuit = balanced_oracle(n)
 	return dj_circuit(oracle_circuit)
 
 if __name__ == "__main__":

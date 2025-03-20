@@ -1,10 +1,7 @@
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
-from qiskit import QuantumCircuit, transpile, transpile
+from qiskit import QuantumCircuit, transpile
 from qiskit_aer import Aer
-from qiskit.visualization import plot_histogram
-import matplotlib.pyplot as plt
-
 
 qc = QuantumCircuit(2)
 qc.h(0)
