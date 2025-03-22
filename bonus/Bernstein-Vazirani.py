@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def main():
 	secret = "a"
-	s_to_search = "a"
+	s_to_search = "b"
 	full_bits = string_to_binary(secret)
 	s = string_to_binary(s_to_search)
 	n = len(s)
@@ -25,6 +25,8 @@ def main():
 	print(f'The prediction was {measurements}.')
 	if full_bits == measurements:
 		print('Correct!')
+	answer = result.get_counts()
+	plot_histogram(answer)
 
 	plt.show()
 
