@@ -7,7 +7,7 @@ from math import sqrt
 
 
 def main():
-	n = 6
+	n = 4
 	qc = Grover_init(n)
 	for _ in range(int(sqrt(n))):
 		qc = Oracle(qc, n)
@@ -32,13 +32,9 @@ def Grover_init(n):
 # Searching for a 111 pattern
 
 def Oracle(qc, n):
-	oracle_qc = QuantumCircuit(n)
-	oracle_qc.h(2)
-	oracle_qc.mcx([0, 1], 2)
-	oracle_qc.h(2)
-	oracle_gate = oracle_qc.to_gate()
-	oracle_gate.name = 'U_f'
-	qc.append(oracle_gate, range(n))
+	qc.ch(0,2)
+	qc.ccx(1,3,2)
+	qc.ch(0,2)
 	return qc
 
 def Diffusion(qc, n):

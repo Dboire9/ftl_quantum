@@ -1,6 +1,7 @@
 from qiskit import QuantumCircuit
 from qiskit_aer import Aer
 import matplotlib.pyplot as plt
+
 from qiskit.visualization import plot_histogram
 
 
@@ -16,8 +17,7 @@ def main():
 
 	balanced_oracle = oracle_b(n + 1)
 	const_oracle = oracle_c(n+1)
-	
-	
+
 	dj_circuit = dj_circuit.compose(balanced_oracle)
 	for qubit in range(n):
 		dj_circuit.h(qubit)
@@ -43,7 +43,7 @@ def oracle_b(nb_qubits):
 	for i in range(3):
 		balanced_oracle.cx(i,3)
 	balanced_oracle.barrier()
-	# print(balanced_oracle)
+	print(balanced_oracle)
 	return balanced_oracle
 
 def oracle_c(nb_qubits):
