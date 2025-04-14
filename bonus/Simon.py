@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 def main():
-	secret = '110'
+	secret = '100'
 	n = len(secret)
 	qc = QuantumCircuit(n*2, n)
 	qc.h(range(n))
@@ -17,17 +17,18 @@ def main():
 	print(qc)
 	backend = Aer.get_backend('qasm_simulator')
 	new_circuit = transpile(qc, backend)
-	job = backend.run(new_circuit, shots=100, memory=True)
+	job = backend.run(new_circuit, shots=200, memory=True)
 	counts = job.result().get_counts()
 	print(f"Clues: {counts}")
 	plot_histogram(counts)
+	# Produit scalaire
 	for z in counts:
 		print('{}.{}={} (mod2)'.format(secret,z,find_it(secret,z)))
 
 	plt.show()
 
 def Simon_algo(qc, n, s):
-	s = s[::-1]
+	s = s[::-1] # Reverse order for qubit
 	for i in range(n):
 		qc.cx(i, n + i)
 	if '1' not in s:
