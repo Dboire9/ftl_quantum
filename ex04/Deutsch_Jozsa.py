@@ -1,57 +1,54 @@
-from qiskit import QuantumCircuit, transpile, QuantumRegister
+from qiskit import QuantumCircuit, transpile, QuantumRegister, ClassicalRegister
 from qiskit_aer import Aer
+import numpy as np
 import matplotlib.pyplot as plt
+from qiskit.visualization import plot_histogram
+
 
 def main():
 	n = 3
-	qc = dj_query(n)
-	print(dj_algo(qc))
+	dj_circuit = QuantumCircuit(n+1, n)
+	for qubit in range(n):
+		dj_circuit.h(qubit)
+	dj_circuit.x(n)
+	dj_circuit.h(n)
+	dj_circuit.barrier()
+
+
+	balanced_oracle = oracle_b(n + 1)
+	# const_oracle = oracle_c(n)
+	
+	
+	dj_circuit = dj_circuit.compose(balanced_oracle)
+	for qubit in range(n):
+		dj_circuit.h(qubit)
+	dj_circuit.barrier()
+	for i in range(n):
+		dj_circuit.measure(i, i)
+
+	print(dj_circuit)
+	backend = Aer.get_backend('qasm_simulator')
+	job = backend.run(dj_circuit, shots=100)
+	result = job.result()
+	counts = result.get_counts()
+	print(counts)
+	plot_histogram(counts)
 	plt.show()
 
-def dj_circuit(function: QuantumCircuit):
-	n = function.num_qubits - 1
-	djc = QuantumCircuit(n + 1, n)
-	djc.x(n)
-	djc.h(range(n + 1))
-	
-	oracle_gate = function.to_gate()
-	oracle_gate.name = 'U_f'
-	djc.append(oracle_gate, range(n + 1))
-	
-	djc.h(range(n))
-	djc.measure(range(n), range(n))
-	return djc
+def oracle_b(nb_qubits):
+	balanced_oracle = QuantumCircuit(nb_qubits)
+	for i in range(1):
+		balanced_oracle.cx(i,3)
+	balanced_oracle.barrier()
+	# print(balanced_oracle)
+	return balanced_oracle
 
-def dj_algo(qc: QuantumCircuit):
-	print(qc)
-	backend = Aer.get_backend('qasm_simulator')
-	new_circuit = transpile(qc, backend)
-	job = backend.run(new_circuit, shots=1, memory=True)
-	result = job.result()
-	measurements = result.get_memory()
-	print(measurements)
-	if "1" in measurements[0]:
-		return "balanced"
-	return "constant"
-
-def balanced_oracle(n: int) -> QuantumCircuit:
-	qreg = QuantumRegister(n + 1, 'q')
-	qc = QuantumCircuit(qreg)
-	for i in range(n):
-		qc.cx(i, n)
-	print(qc)
-	return qc
-
-def constant_oracle(n: int) -> QuantumCircuit:
-	qreg = QuantumRegister(n + 1, 'q')
-	qc = QuantumCircuit(qreg)
-	qc.x(n)
-	print(qc)
-	return qc
-
-def dj_query(n: int) -> QuantumCircuit:
-	oracle_circuit = constant_oracle(n)
-	return dj_circuit(oracle_circuit)
+def oracle_c(nb_qubits):
+	const_oracle = QuantumCircuit(nb_qubits)
+	const_oracle.x(4)
+	const_oracle.barrier()
+	print(const_oracle)
+	return const_oracle
 
 if __name__ == "__main__":
 	main()
